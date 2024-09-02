@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Bienvenido a la Aplicación de Reserva de Horas</h1>
+    {% if current_user.is_authenticated %}
+        <p>Hola, {{ current_user.username }}!</p>
+    {% else %}
+        <p>Por favor, inicia sesión o regístrate para comenzar.</p>
+    {% endif %}
+{% endblock %}
