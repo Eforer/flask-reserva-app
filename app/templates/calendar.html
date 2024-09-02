@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Reservation Calendar</h1>
+    <div id='calendar'></div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'timeGridWeek',
+        events: '/get_available_slots',
+        selectable: true,
+        select: function(info) {
+            if (confirm('Would you like to make a reservation for ' + info.startStr + '?')) {
+                fetch('/make_reservation', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        start: info.startStr,
+                        end: info.endStr
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert('Reservation made successfully!');
+                        calendar.refetchEvents();
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                });
+            }
+        }
+    });
+    calendar.render();
+});
+</script>
+{% endblock %}
